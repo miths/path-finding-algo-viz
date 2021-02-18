@@ -10,6 +10,8 @@ var h;
 var path = [];
 var walls = [];
 var runs = [];
+var st;
+
 // var commonGrid;
 // var noSolution = false;
 
@@ -29,59 +31,55 @@ function spot(i, j) {
   this.parent = undefined;
   this.wall = false;
   this.run = false;
-  this.walk = false;
-  this.cost = 0;
+  this.cost = 1;
 
-  // var random = random(1);
+  var r = random(1);
+  var WALL_COLOR = 0;
+  var RUN_COLOR = 255;
 
-  if (random(1) < 0.28) {
+  if (r < 0.25) {
     this.wall = true;
     walls.push([i, j]);
-    // console.log(walls);
-  } else if (random(1) < 0.2) {
-    this.run = true;
-    runs.push([i, j]);
-  }
-
-  if (this.run) {
-    fill(color(0, 128, 0));
-    noStroke();
-    // fillc;
-    ellipse(this.i * w + w / 2, this.j * h + h / 2, w / 2, h / 2);
-  }
-
-  if (this.wall) {
+    this.cost = 3;
     fill(0);
     noStroke();
     // fillc;
-    ellipse(this.i * w + w / 2, this.j * h + h / 2, w / 2, h / 2);
+    ellipse(i * w + w / 2, j * h + h / 2, w * 0.75, h * 0.75);
+    // console.log(walls);
+  } else if (r < 0.4) {
+    this.run = true;
+    runs.push([i, j]);
+    this.cost = 0;
+    fill(255);
+    noStroke();
+    // fillc;
+    ellipse(i * w + w / 2, j * h + h / 2, w * 0.75, h * 0.75);
   }
-  this.show = function (color) {
-    // fill(color);
-    if (this.wall) {
-      fill(0);
-      noStroke();
-      // fillc;
-      ellipse(this.i * w + w / 2, this.j * h + h / 2, w / 2, h / 2);
-    }
-    // else {
-    //   fill(150);
-    //   rect(this.i * w, this.j * h, w - 1, h - 1);
-    // }
-  };
 
   this.addNeighbors = function (grid) {
     var i = this.i;
     var j = this.j;
     var wall = this.wall;
+    var run = this.run;
+    var WALL_COLOR = 0;
+    var RUN_COLOR = 255;
 
     if (i < cols - 1) {
       this.neighbors.push(grid[i + 1][j]);
       if (wall == true && grid[i + 1][j].wall == true) {
-        stroke(0);
+        stroke(WALL_COLOR);
         noFill();
         // fill(0);
-        strokeWeight(w / 2);
+        strokeWeight(w * 0.75);
+        beginShape();
+        vertex(i * w + w / 2, j * h + h / 2);
+        vertex((i + 1) * w + w / 2, j * h + h / 2);
+        endShape();
+      } else if (run == true && grid[i + 1][j].run == true) {
+        stroke(RUN_COLOR);
+        noFill();
+        // fill(0);
+        strokeWeight(w * 0.75);
         beginShape();
         vertex(i * w + w / 2, j * h + h / 2);
         vertex((i + 1) * w + w / 2, j * h + h / 2);
@@ -90,11 +88,21 @@ function spot(i, j) {
     }
     if (i > 0) {
       this.neighbors.push(grid[i - 1][j]);
+
       if (wall == true && grid[i - 1][j].wall == true) {
-        stroke(0);
+        stroke(WALL_COLOR);
         noFill();
         // fill(0);
-        strokeWeight(w / 2);
+        strokeWeight(w * 0.75);
+        beginShape();
+        vertex(i * w + w / 2, j * h + h / 2);
+        vertex((i - 1) * w + w / 2, j * h + h / 2);
+        endShape();
+      } else if (run == true && grid[i - 1][j].run == true) {
+        stroke(RUN_COLOR);
+        noFill();
+        // fill(0);
+        strokeWeight(w * 0.75);
         beginShape();
         vertex(i * w + w / 2, j * h + h / 2);
         vertex((i - 1) * w + w / 2, j * h + h / 2);
@@ -103,11 +111,21 @@ function spot(i, j) {
     }
     if (j < rows - 1) {
       this.neighbors.push(grid[i][j + 1]);
+
       if (wall == true && grid[i][j + 1].wall == true) {
-        stroke(0);
+        stroke(WALL_COLOR);
         noFill();
         // fill(0);
-        strokeWeight(w / 2);
+        strokeWeight(w * 0.75);
+        beginShape();
+        vertex(i * w + w / 2, j * h + h / 2);
+        vertex(i * w + w / 2, (j + 1) * h + h / 2);
+        endShape();
+      } else if (run == true && grid[i][j + 1].run == true) {
+        stroke(RUN_COLOR);
+        noFill();
+        // fill(0);
+        strokeWeight(w * 0.75);
         beginShape();
         vertex(i * w + w / 2, j * h + h / 2);
         vertex(i * w + w / 2, (j + 1) * h + h / 2);
@@ -117,60 +135,86 @@ function spot(i, j) {
     if (j > 0) {
       this.neighbors.push(grid[i][j - 1]);
       if (wall == true && grid[i][j - 1].wall == true) {
-        stroke(0);
+        stroke(WALL_COLOR);
         noFill();
         // fill(0);
-        strokeWeight(w / 2);
+        strokeWeight(w * 0.75);
+        beginShape();
+        vertex(i * w + w / 2, j * h + h / 2);
+        vertex(i * w + w / 2, (j - 1) * h + h / 2);
+        endShape();
+      } else if (run == true && grid[i][j - 1].run == true) {
+        stroke(RUN_COLOR);
+        noFill();
+        // fill(0);
+        strokeWeight(w * 0.75);
         beginShape();
         vertex(i * w + w / 2, j * h + h / 2);
         vertex(i * w + w / 2, (j - 1) * h + h / 2);
         endShape();
       }
     }
-    if (i > 0 && j > 0 && (!grid[i][j - 1].wall || !grid[i - 1][j].wall)) {
+    if (i > 0 && j > 0) {
       this.neighbors.push(grid[i - 1][j - 1]);
       if (wall == true && grid[i - 1][j - 1].wall == true) {
-        // grid[i - 1][j].wall = true;
-        stroke(0);
+        stroke(WALL_COLOR);
+        noFill();
+
+        strokeWeight(w * 0.75);
+        beginShape();
+        vertex(i * w + w / 2, j * h + h / 2);
+        vertex((i - 1) * w + w / 2, (j - 1) * h + h / 2);
+        endShape();
+      } else if (run == true && grid[i - 1][j - 1].run == true) {
+        stroke(RUN_COLOR);
         noFill();
         // fill(0);
-        strokeWeight(w / 2);
+        strokeWeight(w * 0.75);
         beginShape();
         vertex(i * w + w / 2, j * h + h / 2);
         vertex((i - 1) * w + w / 2, (j - 1) * h + h / 2);
         endShape();
       }
     }
-    if (
-      i < cols - 1 &&
-      j > 0 &&
-      (!grid[i][j - 1].wall || !grid[i + 1][j].wall)
-    ) {
+    if (i < cols - 1 && j > 0) {
       this.neighbors.push(grid[i + 1][j - 1]);
+
       if (wall == true && grid[i + 1][j - 1].wall == true) {
-        // grid[i][j - 1] = true;
-        stroke(0);
+        stroke(WALL_COLOR);
         noFill();
         // fill(0);
-        strokeWeight(w / 2);
+        strokeWeight(w * 0.75);
+        beginShape();
+        vertex(i * w + w / 2, j * h + h / 2);
+        vertex((i + 1) * w + w / 2, (j - 1) * h + h / 2);
+        endShape();
+      } else if (run == true && grid[i + 1][j - 1].run == true) {
+        stroke(RUN_COLOR);
+        noFill();
+        // fill(0);
+        strokeWeight(w * 0.75);
         beginShape();
         vertex(i * w + w / 2, j * h + h / 2);
         vertex((i + 1) * w + w / 2, (j - 1) * h + h / 2);
         endShape();
       }
     }
-    if (
-      i > 0 &&
-      j < rows - 1 &&
-      (!grid[i][j + 1].wall || !grid[i - 1][j].wall)
-    ) {
+    if (i > 0 && j < rows - 1) {
       this.neighbors.push(grid[i - 1][j + 1]);
       if (wall == true && grid[i - 1][j + 1].wall == true) {
-        // grid[i][j + 1] = true;
-        stroke(0);
+        stroke(WALL_COLOR);
         noFill();
         // fill(0);
-        strokeWeight(w / 2);
+        strokeWeight(w * 0.75);
+        beginShape();
+        vertex(i * w + w / 2, j * h + h / 2);
+        vertex((i - 1) * w + w / 2, (j + 1) * h + h / 2);
+        endShape();
+      } else if (run == true && grid[i - 1][j + 1].run == true) {
+        stroke(RUN_COLOR);
+        noFill();
+        // fill(0);
+        strokeWeight(w * 0.75);
         beginShape();
         vertex(i * w + w / 2, j * h + h / 2);
         vertex((i - 1) * w + w / 2, (j + 1) * h + h / 2);
@@ -183,12 +227,21 @@ function spot(i, j) {
       (!grid[i][j + 1].wall || !grid[i + 1][j].wall)
     ) {
       this.neighbors.push(grid[i + 1][j + 1]);
+
       if (wall == true && grid[i + 1][j + 1].wall == true) {
-        // grid[i + 1][j] = true;
-        stroke(0);
+        stroke(WALL_COLOR);
         noFill();
         // fill(0);
-        strokeWeight(w / 2);
+        strokeWeight(w * 0.75);
+        beginShape();
+        vertex(i * w + w / 2, j * h + h / 2);
+        vertex((i + 1) * w + w / 2, (j + 1) * h + h / 2);
+        endShape();
+      } else if (run == true && grid[i + 1][j + 1].run == true) {
+        stroke(RUN_COLOR);
+        noFill();
+        // fill(0);
+        strokeWeight(w * 0.75);
         beginShape();
         vertex(i * w + w / 2, j * h + h / 2);
         vertex((i + 1) * w + w / 2, (j + 1) * h + h / 2);
@@ -199,8 +252,9 @@ function spot(i, j) {
 }
 
 function setup() {
+  st = performance.now();
   let renderer = createCanvas(600, 600);
-  background(170);
+  background(150);
   renderer.parent("aStar");
   //   createCanvas(600, 600);
 
@@ -233,6 +287,7 @@ function setup() {
   end = grid[cols - 1][rows - 1];
   start.wall = false;
   end.wall = false;
+  end.cost = -5;
   noStroke();
   fill(color(255, 0, 0));
   rect(0 * w, 0 * h, w - 1, h - 1);
@@ -257,16 +312,32 @@ function draw() {
     }
     var current = openSet[winner];
     if (current == end) {
+      var path_cost = 0;
       path = [];
       var temp = current;
       while (temp) {
         path.push(temp);
+        path_cost += temp.cost;
         temp = temp.parent;
       }
-      //   console.log(path);
+      var explored = Math.round((closedSet.length / (cols * rows)) * 100.0);
+      end = performance.now();
+      console.log(explored);
+      document.getElementById("aStar_text").innerHTML =
+        "Graph explored: " +
+        explored +
+        "%" +
+        "<br />" +
+        "Path Cost: " +
+        path_cost +
+        "<br/>" +
+        "Time: " +
+        (end - st).toFixed(2) +
+        " ms";
+      console.log(st);
       stroke(0, 255, 0);
       noFill();
-      strokeWeight(w / 2);
+      strokeWeight(w / 3);
       beginShape();
 
       for (var i = 0; i < path.length; i++) {
@@ -274,6 +345,7 @@ function draw() {
       }
 
       endShape();
+
       noLoop(); // to stop looping when done
       console.log("end");
       return;
@@ -288,8 +360,8 @@ function draw() {
     for (var i = 0; i < neighbors.length; i++) {
       var neighbor = neighbors[i];
 
-      if (!closedSet.includes(neighbor) && !neighbor.wall) {
-        var tempG = current.g + 1;
+      if (!closedSet.includes(neighbor)) {
+        var tempG = current.g + neighbor.cost;
         var newPath = false;
         if (openSet.includes(neighbor)) {
           if (tempG < neighbor.g) {
@@ -314,22 +386,7 @@ function draw() {
     return;
     //   no solution
   }
-  //   background(170);
-  //   for (var i = 0; i < cols; i++) {
-  //     for (var j = 0; j < rows; j++) {
-  //       grid[i][j].show(color(255));
-  //     }
-  //   }
 
-  //   for (var i = 0; i < closedSet.length; i++) {
-  //     closedSet[i].show(color(255, 0, 0));
-  //   }
-
-  //   for (var i = 0; i < openSet.length; i++) {
-  //     openSet[i].show(color(0, 255, 0));
-  //   }
-
-  //   if (!noSolution) {
   path = [];
   var temp = current;
   while (temp) {
@@ -337,13 +394,13 @@ function draw() {
     temp = temp.parent;
   }
   //   }
-  for (var i = 0; i < path.length; i++) {
-    path[i].show(color(0, 0, 255));
-  }
+  // for (var i = 0; i < path.length; i++) {
+  //   path[i].show(color(0, 0, 255));
+  // }
 
-  stroke(255, 0, 200);
+  stroke(176, 64, 0);
   noFill();
-  strokeWeight(w / 2);
+  strokeWeight(w * 0.15);
   beginShape();
 
   for (var i = 0; i < path.length; i++) {

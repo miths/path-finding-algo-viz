@@ -7,23 +7,73 @@
 </head>
 
 <body>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+        }
+
+
+        .flex-container {
+        display: flex;
+        }
+
+        .flex-child {
+            flex: 1;
+            font-size: 2em;
+            font-weight: bold;
+            /* border: 2px solid darkgray; */
+        }  
+
+        .flex-child:first-child {
+            margin-right: 20px;
+        } 
+    </style>
+
     <h1>A*</h1>
-    <div id="aStar"></div>
+    <div class="flex-container">
+        
+        <div class="flex-child" id="aStar"></div>
+        <div class="flex-child" ><p id="aStar_text"></p> </div>
+    </div>
     <hr>
     <h1>break</h1>
-    <div id="aStar2"></div>
+    <div class="flex-container">
+        
+        <div class="flex-child" id="aStar2"></div>
+        <div class="flex-child"></div>
+    </div>
     <hr>
     <h1> Dijkstra's algorithm </h1>
-    <div id="dijkstra"></div>
+    <div class="flex-container">
+        <div class="flex-child" id="dijkstra"></div>
+        <div class="flex-child"> <p id="dijkstra_text"></p></div>
+    </div>
     <hr>
     <h1> BFS algorithm </h1>
-    <div id="BFS"></div>
+    <div class="flex-container">
+        
+        <div class="flex-child" id="BFS"></div>
+        <div class="flex-child"> <p id="bfs_text"></p></div>
+    </div>
+    <hr>
+    <h1>Bellman Ford</h1>
+    <div class="flex-container">
+        
+        <div class="flex-child" id="bellman_ford"></div>
+        <div class="flex-child"> <p id="bellman_text"></p></div>
+    </div>
+
+
+    
 </body>
 <script language="javascript" type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.2.0/lib/p5.min.js"></script>
 
 
 <script language="javascript" type="text/javascript" src="sketch.js"></script>
-<script language="javascript" type="text/javascript" src="sketch_i1.js"></script>
+<!-- <script language="javascript" type="text/javascript" src="sketch_i1.js"></script> -->
 <script language="javascript" type="text/javascript" src="sketch_dij.js"></script>
 <script language="javascript" type="text/javascript" src="sketch_bfs.js"></script>
+<script language="javascript" type="text/javascript" src="sketch_bellman_ford.js"></script>
 </html>
